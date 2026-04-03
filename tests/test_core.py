@@ -4,6 +4,7 @@ import json
 import pytest
 
 import configzen
+from configzen.core import ConfigDict
 
 # --- JSON TESTING ---
 
@@ -17,6 +18,22 @@ def test_load_json(tmp_path):
     # Load it
     config = configzen.load(str(p))
     assert config.port == 8080
+
+
+def test_json_non_dict_root_raises(tmp_path):
+    p = tmp_path / "config.json"
+    p.write_text(json.dumps([1, 2, 3]))
+
+    with pytest.raises(ValueError, match="JSON root must be an object"):
+        configzen.load(str(p))
+
+
+def test_configdict_does_not_mutate_nested_input():
+    inner = {"port": 5432}
+    data = {"db": inner}
+    cfg = ConfigDict(data)
+    inner["port"] = 9999
+    assert cfg.db.port == 5432
 
 
 # --- ENV OVERRIDE TESTING ---
@@ -65,6 +82,26 @@ def test_load_yaml(tmp_path):
     config = configzen.load(str(p))
     assert config.app.name == "ZenApp"
     assert config.app.debug is True
+
+
+def test_load_empty_yaml(tmp_path):
+    pytest.importorskip("yaml")
+
+    p = tmp_path / "config.yaml"
+    p.write_text("# only comments\n")
+
+    config = configzen.load(str(p))
+    assert dict(config) == {}
+
+
+def test_yaml_non_dict_root_raises(tmp_path):
+    pytest.importorskip("yaml")
+
+    p = tmp_path / "config.yaml"
+    p.write_text("[1, 2, 3]\n")
+
+    with pytest.raises(ValueError, match="YAML root must be a mapping"):
+        configzen.load(str(p))
 
 
 # --- ENV OVERRIDE TESTING (Cross-Format) ---

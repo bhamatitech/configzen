@@ -2,14 +2,19 @@ import os
 from typing import Any
 
 
-class ConfigDict(dict):
-    """A dictionary that allows dot-access and recursive attribute lookup."""
+def _deep_copy_dict_tree(d: dict[str, Any]) -> dict[str, Any]:
+    return {k: _deep_copy_dict_tree(v) if isinstance(v, dict) else v for k, v in d.items()}
 
-    def __init__(self, data: dict[str, Any]):
-        # Convert nested dicts into ConfigDicts recursively
-        for key, value in data.items():
+
+class ConfigDict(dict):
+    """Dict with dot-access for keys; use bracket access if the key name matches a dict method (e.g. 'items')."""
+
+    def __init__(self, data: dict[str, Any], *, _copy: bool = True):
+        if _copy:
+            data = _deep_copy_dict_tree(data)
+        for key, value in list(data.items()):
             if isinstance(value, dict):
-                data[key] = ConfigDict(value)
+                data[key] = ConfigDict(value, _copy=False)
         super().__init__(data)
 
     def __getattr__(self, item):

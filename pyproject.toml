@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "configzen"
 version = "0.1.0"
@@ -6,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Bshara Hamati", email = "bhamatitech@example.com"}
+    {name = "Bshara Hamati", email = "bhamati.tech@gmail.com"}
 ]
 keywords = ["config", "settings", "json", "yaml", "env", "environment-variables"]
 classifiers = [
@@ -25,6 +29,9 @@ dependencies = []
 yaml = ["PyYAML>=6.0"]
 toml = ["tomli>=2.0.0"] # For Python < 3.11 users
 all = ["PyYAML>=6.0", "tomli>=2.0.0"]
+
+[tool.setuptools]
+license-files = ["LICENSE"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
