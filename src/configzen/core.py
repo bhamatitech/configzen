@@ -55,6 +55,7 @@ def _merge_env_vars(data: dict, prefix: str, case_sensitive: bool = True) -> dic
                     current = current[target_key]
     return data
 
+
 def _cast_value(original_val, new_val: str):
     if original_val is None:
         return new_val

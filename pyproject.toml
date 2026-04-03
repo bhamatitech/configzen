@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "configzen"
 version = "0.1.0"
-description = "Simple, zero-config Python library for JSON/YAML with ENV overrides."
+description = "Simple, zero-config Python library for JSON, YAML, and TOML configs with environment-variable overrides."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
@@ -27,8 +27,8 @@ dependencies = []
 
 [project.optional-dependencies]
 yaml = ["PyYAML>=6.0"]
-toml = ["tomli>=2.0.0"] # For Python < 3.11 users
-all = ["PyYAML>=6.0", "tomli>=2.0.0"]
+toml = ["tomli>=2.0.0; python_version < '3.11'"] # For Python < 3.11 users
+all = ["PyYAML>=6.0", "tomli>=2.0.0; python_version < '3.11'"]
 
 [tool.setuptools]
 license-files = ["LICENSE"]

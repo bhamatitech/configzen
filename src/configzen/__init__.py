@@ -9,7 +9,7 @@ DEFAULT_NAMES = ["config.toml", "config.yaml", "config.yml", "config.json"]
 def load(filepath: Optional[str] = None, env_prefix: str = "CONFIGZEN", case_sensitive: bool = True) -> ConfigDict:
     """
     Load a configuration file.
-    Throws an error if multiple default config files are found to avoid ambiguity.
+    Raises an error if multiple default config files are found to avoid ambiguity.
     """
     target_path = filepath
 
