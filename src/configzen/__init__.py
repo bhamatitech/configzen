@@ -10,6 +10,10 @@ def load(filepath: Optional[str] = None, env_prefix: str = "CONFIGZEN", case_sen
     """
     Load a configuration file.
     Raises an error if multiple default config files are found to avoid ambiguity.
+
+    If case_sensitive is False, environment variable names are matched with a
+    case-insensitive prefix, new keys from the environment use lowercase names,
+    and attribute access (e.g. config.host) matches keys case-insensitively.
     """
     target_path = filepath
 
@@ -32,4 +36,4 @@ def load(filepath: Optional[str] = None, env_prefix: str = "CONFIGZEN", case_sen
 
     data = load_file(target_path)
     data = _merge_env_vars(data=data, prefix=env_prefix, case_sensitive=case_sensitive)
-    return ConfigDict(data)
+    return ConfigDict(data, case_insensitive_access=not case_sensitive)

@@ -152,9 +152,33 @@ def test_case_insensitive_override(tmp_path):
         # even though it was set as NEWKEY
         config_zen = configzen.load(str(p), case_sensitive=False)
         assert config_zen.newkey == "value"
+        assert config_zen.database.port == 9000
 
     finally:
         if "CONFIGZEN_DATABASE__PORT" in os.environ:
             del os.environ["CONFIGZEN_DATABASE__PORT"]
         if "CONFIGZEN_NEWKEY" in os.environ:
             del os.environ["CONFIGZEN_NEWKEY"]
+
+
+def test_case_insensitive_env_prefix_and_dot_access(tmp_path, monkeypatch):
+    p = tmp_path / "config.json"
+    p.write_text(json.dumps({"Host": "localhost", "db": {"Port": 1}}))
+
+    # Lowercase prefix in env (only honored when case_sensitive=False)
+    monkeypatch.setenv("configzen_HOST", "remote")
+    monkeypatch.setenv("configzen_DB__PORT", "5432")
+
+    config = configzen.load(str(p), case_sensitive=False)
+    assert config.host == "remote"
+    assert config.db.port == 5432
+
+
+def test_case_sensitive_default_exact_attribute_access(tmp_path):
+    p = tmp_path / "config.json"
+    p.write_text(json.dumps({"Host": "only"}))
+
+    config = configzen.load(str(p), case_sensitive=True)
+    assert config.Host == "only"
+    with pytest.raises(AttributeError):
+        _ = config.host

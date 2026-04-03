@@ -9,29 +9,50 @@ def _deep_copy_dict_tree(d: dict[str, Any]) -> dict[str, Any]:
 class ConfigDict(dict):
     """Dict with dot-access for keys; use bracket access if the key name matches a dict method (e.g. 'items')."""
 
-    def __init__(self, data: dict[str, Any], *, _copy: bool = True):
+    def __init__(
+        self,
+        data: dict[str, Any],
+        *,
+        _copy: bool = True,
+        case_insensitive_access: bool = False,
+    ):
+        self._case_insensitive_access = case_insensitive_access
         if _copy:
             data = _deep_copy_dict_tree(data)
         for key, value in list(data.items()):
             if isinstance(value, dict):
-                data[key] = ConfigDict(value, _copy=False)
+                data[key] = ConfigDict(
+                    value,
+                    _copy=False,
+                    case_insensitive_access=case_insensitive_access,
+                )
         super().__init__(data)
 
     def __getattr__(self, item):
         if item in self:
             return self[item]
-        # This makes it clear which key was missing in a dot-access chain
+        if self._case_insensitive_access:
+            for key in self:
+                if isinstance(key, str) and key.lower() == item.lower():
+                    return self[key]
         raise AttributeError(f"Configuration key '{item}' is missing.")
 
 
 def _merge_env_vars(data: dict, prefix: str, case_sensitive: bool = True) -> dict:
-    prefix = f"{prefix}_"
+    prefix_with_underscore = f"{prefix}_"
+    plen = len(prefix_with_underscore)
+    prefix_lower = prefix_with_underscore.lower()
+
     for env_key, env_val in os.environ.items():
-        if not env_key.startswith(prefix):
-            continue
+        if case_sensitive:
+            if not env_key.startswith(prefix_with_underscore):
+                continue
+        else:
+            if len(env_key) < plen or env_key[:plen].lower() != prefix_lower:
+                continue
 
         # CONFIGZEN_DB__HOST -> ['DB', 'HOST']
-        parts = env_key[len(prefix):].split("__")
+        parts = env_key[plen:].split("__")
         current = data
 
         for i, part in enumerate(parts):
