@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv/
+
+# Distribution / Build
+dist/
+build/
+*.egg-info/
+
+# PyCharm / IDEs
+.idea/
+.vscode/
+
+# Configuration (Don't let your test configs leak!)
+.env
+*.local.json
+*.local.yaml
+
+# OS specific
+.DS_Store
+Thumbs.db

@@ -1,0 +1,31 @@
+[project]
+name = "configzen"
+version = "0.1.0"
+description = "Simple, zero-config Python library for JSON/YAML with ENV overrides."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Bshara Hamati", email = "bhamatitech@example.com"}
+]
+keywords = ["config", "settings", "json", "yaml", "env", "environment-variables"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+]
+dependencies = []
+
+[project.urls]
+"Homepage" = "https://github.com/bhamatitech/configzen"
+"Bug Tracker" = "https://github.com/bhamatitech/configzen/issues"
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6.0"]
+toml = ["tomli>=2.0.0"] # For Python < 3.11 users
+all = ["PyYAML>=6.0", "tomli>=2.0.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests*", "docs*"]
